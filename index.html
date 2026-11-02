@@ -3,7 +3,30 @@ body{margin:0;min-height:100vh;display:grid;place-items:center;padding:18px;box-
 </style></head><body><main><header><div class="orb">◉</div><h1>JARVIS</h1><p>Personal assistant · Phase 1</p></header><div id="status">Ready. Type a command or tap Speak.</div><div class="row"><input id="command" placeholder="Try: time, date, hello, help"><button id="send">Send</button><button id="mic" class="secondary">🎙 Speak</button></div><div id="output">Hello! I am JARVIS. How can I help?</div><p class="hint">Microphone is optional and starts only when you tap Speak. Speech recognition depends on browser support and may require internet. No account, API key, or personal data is required for this demo.</p></main>
 <script>
 const $=id=>document.getElementById(id);
-function answer(raw){let q=raw.toLowerCase().trim();if(!q)return"Please type a command.";if(q.includes("time"))return"The time is "+new Date().toLocaleTimeString();if(q.includes("date")||q.includes("day"))return"Today is "+new Date().toLocaleDateString(undefined,{weekday:"long",year:"numeric",month:"long",day:"numeric"});if(q.includes("hello")||q.includes("hi"))return"Hello! JARVIS is ready.";if(q.includes("help"))return"I can answer basic commands: time, date, hello, and help. More features will be added step by step.";return"I don't know that command yet. Type help to see what I can do."}
+function answer(raw){
+let q=raw.toLowerCase().trim();
+
+if(!q)return"Please type a command.";
+
+if(q.includes("time")||q.includes("samay")||q.includes("kitne baje"))
+return"The time is "+new Date().toLocaleTimeString();
+
+if(q.includes("date")||q.includes("day")||q.includes("tarikh")||q.includes("aaj ki date"))
+return"Today is "+new Date().toLocaleDateString();
+
+if(q.includes("hello")||q.includes("hi")||q.includes("namaste")||q.includes("namaskar"))
+return"Hello! Namaste! JARVIS is ready.";
+
+if(q.includes("kaise ho")||q.includes("how are you"))
+return"Main bilkul ready hoon! How can I help you?";
+
+if(q.includes("naam")||q.includes("your name"))
+return"My name is JARVIS, your personal assistant.";
+
+if(q.includes("help")||q.includes("madad"))
+return"I can understand basic Hindi and English commands, tell time and date, and greet you.";
+
+return"I am still learning. Please try another command.";}
 function run(t){let a=answer(t);$("output").textContent=a;$("status").textContent="Command processed";if("speechSynthesis"in window){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(a));}}
 $("send").onclick=()=>run($("command").value);$("command").onkeydown=e=>{if(e.key==="Enter")run($("command").value)};
 $("mic").onclick=()=>{let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){$("status").textContent="Speech recognition isn't supported here. Please type.";return;}try{let r=new SR();r.lang="en-IN";r.onstart=()=>$("status").textContent="Listening…";r.onresult=e=>{$("command").value=e.results[0][0].transcript;run($("command").value)};r.onerror=e=>$("status").textContent="Speech error: "+e.error+". You can type instead.";r.start()}catch(e){$("status").textContent="Could not start microphone. Please type instead."}};
