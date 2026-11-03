@@ -8,25 +8,91 @@ let q=raw.toLowerCase().trim();
 
 if(!q)return"Please type a command.";
 
+// TIME
 if(q.includes("time")||q.includes("samay")||q.includes("kitne baje"))
 return"The time is "+new Date().toLocaleTimeString();
 
-if(q.includes("date")||q.includes("day")||q.includes("tarikh")||q.includes("aaj ki date"))
-return"Today is "+new Date().toLocaleDateString();
+// DATE
+if(q.includes("date")||q.includes("tarikh")||q.includes("aaj ki date"))
+return"Today is "+new Date().toLocaleDateString(undefined,{weekday:"long",year:"numeric",month:"long",day:"numeric"});
 
-if(q.includes("hello")||q.includes("hi")||q.includes("namaste")||q.includes("namaskar"))
+// GREETINGS
+if(["hello","hi","hey","namaste","namaskar"].some(x=>q===x||q.startsWith(x+" ")))
 return"Hello! Namaste! JARVIS is ready.";
 
-if(q.includes("kaise ho")||q.includes("how are you"))
+// PERSONALITY
+if(q.includes("how are you")||q.includes("kaise ho"))
 return"Main bilkul ready hoon! How can I help you?";
 
-if(q.includes("naam")||q.includes("your name"))
+if(q.includes("your name")||q.includes("tumhara naam")||q.includes("naam kya hai"))
 return"My name is JARVIS, your personal assistant.";
 
-if(q.includes("help")||q.includes("madad"))
-return"I can understand basic Hindi and English commands, tell time and date, and greet you.";
+if(q.includes("who made you")||q.includes("who created you"))
+return"I am being developed as a personal assistant project.";
 
-return"I am still learning. Please try another command.";}
+// CALCULATOR
+if(q.includes("calculate")||q.includes("what is")||q.includes("kitna")||q.includes("solve")||q.includes("plus")||q.includes("minus")||q.includes("into")||q.includes("divided by")){
+
+let s=q.replace(/what is|calculate|solve|please|kitna hota hai|kitna|answer|equals/g,"");
+
+s=s.replace(/multiplied by|multiply by|times|into/g,"*");
+s=s.replace(/divided by|divide by/g,"/");
+s=s.replace(/plus/g,"+").replace(/minus/g,"-");
+
+let m=s.match(/(-?\d+(?:\.\d+)?)\s*([+\-*/])\s*(-?\d+(?:\.\d+)?)/);
+
+if(m){
+let a=Number(m[1]);
+let b=Number(m[3]);
+let op=m[2];
+let result;
+
+if(op==="+")result=a+b;
+if(op==="-")result=a-b;
+if(op==="*")result=a*b;
+if(op==="/")result=b===0?"Cannot divide by zero.":a/b;
+
+return "The answer is "+result;
+}
+
+return"Sorry, I couldn't understand that calculation. Try 25 plus 35.";
+}
+
+// GENERAL KNOWLEDGE
+if(q.includes("capital of india"))
+return"The capital of India is New Delhi.";
+
+if(q.includes("largest planet"))
+return"Jupiter is the largest planet in our solar system.";
+
+if(q.includes("red planet"))
+return"Mars is known as the Red Planet.";
+
+if(q.includes("water formula")||q.includes("formula of water"))
+return"The chemical formula of water is H2O.";
+
+if(q.includes("who is the president of india"))
+return"I don't have live information about the current president yet.";
+
+// DAILY COMMANDS
+if(q.includes("thank you")||q.includes("thanks")||q.includes("shukriya"))
+return"You're welcome! Always ready to help.";
+
+if(q.includes("good morning"))
+return"Good morning! Have a productive day.";
+
+if(q.includes("good night"))
+return"Good night! Have a peaceful sleep.";
+
+if(q.includes("who are you")||q.includes("what are you"))
+return"I am JARVIS, a personal assistant project that is growing step by step.";
+
+// HELP
+if(q.includes("help")||q.includes("madad"))
+return"I can tell time and date, greet you, answer selected general knowledge questions, and solve basic calculations in Hindi and English.";
+
+return"I'm still learning. Please try another command or type help.";
+  }
 function run(t){let a=answer(t);$("output").textContent=a;$("status").textContent="Command processed";if("speechSynthesis"in window){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(a));}}
 $("send").onclick=()=>run($("command").value);$("command").onkeydown=e=>{if(e.key==="Enter")run($("command").value)};
 $("mic").onclick=()=>{let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){$("status").textContent="Speech recognition isn't supported here. Please type.";return;}try{let r=new SR();r.lang="en-IN";r.onstart=()=>$("status").textContent="Listening…";r.onresult=e=>{$("command").value=e.results[0][0].transcript;run($("command").value)};r.onerror=e=>$("status").textContent="Speech error: "+e.error+". You can type instead.";r.start()}catch(e){$("status").textContent="Could not start microphone. Please type instead."}};
